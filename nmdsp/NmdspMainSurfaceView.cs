@@ -20,7 +20,7 @@ namespace nmdsp
 {
     class NmdspMainView : SurfaceView, ISurfaceHolderCallback
     {
-        NmdspMainSurfaceView activity;
+        NmdspMainActivity activity;
         Timer update_timer;
         long time;
         const int color_background = unchecked ((int) 0xFF000008);
@@ -63,7 +63,7 @@ namespace nmdsp
         public NmdspMainView(Context context)
             : base (context)
         {
-            activity = (NmdspMainSurfaceView)context;
+            activity = (NmdspMainActivity) context;
             key_lower_bound = 24;
             key_higher_bound = 128;
             all_keys = key_higher_bound - key_lower_bound;
@@ -117,7 +117,7 @@ namespace nmdsp
             int x = (int) e.GetX();
 			int y = (int) e.GetY();
 			switch (e.Action) {
-			case MotionEvent.ActionDown:
+			case MotionEventActions.Down:
 				if (play_button.Contains(x, y))
 					ProcessPlay();
 				else if (pause_button.Contains(x, y))
@@ -619,12 +619,12 @@ namespace nmdsp
 		}
     }
 
-    public class NmdspMainSurfaceView : Activity
+    [Activity(MainLauncher = true)]
+    public class NmdspMainActivity : Activity
     {
         NmdspMainView view;
 
-        public NmdspMainSurfaceView(IntPtr handle)
-            : base(handle)
+        public NmdspMainActivity ()
         {
         }
 
@@ -641,10 +641,10 @@ namespace nmdsp
             view.ProcessPause();
         }
 
-        protected override void OnActivityResult(int requestCode, int resultCode, Intent data)
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (resultCode == ResultOk && data != null)
+            if (resultCode == Result.Ok && data != null)
             {
                 String filename = data.DataString;
                 if (filename == null)
