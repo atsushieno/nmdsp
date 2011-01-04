@@ -18,72 +18,77 @@ using Timer = System.Timers.Timer;
 
 namespace nmdsp
 {
-    class NmdspMainView : SurfaceView, ISurfaceHolderCallback
-    {
-        NmdspMainActivity activity;
-        Timer update_timer;
-        long time;
-        const int color_background = unchecked ((int) 0xFF000008);
-        const int color_white_key = unchecked ((int) 0xFFAaAaAa);
-        const int color_basic_stroke = unchecked ((int) 0xFF000000);
-        const int color_black_key = unchecked ((int) 0xFF000000);
-        const int color_black_key_edge = unchecked ((int) 0xFFFfFfFf);
-        const int color_keyon = unchecked ((int) 0xFFFfFf00);
-        const int color_aftertouch = unchecked ((int) 0xFFFf8000);
-        const int color_bend = unchecked ((int) 0xFF0080Ff);
-        const int color_hold = unchecked ((int) 0xFF0080C0);
-        const int color_bright = unchecked ((int) 0xFFFfFfE0);
-        const int color_usual = unchecked ((int) 0xFF3060C0);
-        const int color_dark = unchecked ((int) 0xFF1830C0);
-        const int color_hidden = unchecked ((int) 0xFF000030);
-        const int color_ch_base = unchecked ((int) color_bright);
-        const int color_ch_colored = unchecked ((int) color_usual);
-        const int color_ch_dark = unchecked ((int) color_dark);
-        const int color_ch_hidden = unchecked ((int) color_hidden);
-        const int color_ch_text_colored = unchecked ((int) color_ch_colored);
-        const int color_ch_text_base = unchecked ((int) color_ch_base);
-        const int color_ch_text_dark = unchecked ((int) color_ch_dark);
-        const int color_ch_text_hidden = unchecked ((int) color_ch_hidden);
-        int all_keys, key_lower_bound, key_higher_bound;
-        bool small_screen;
-        int channels;
-        int key_width;
-        int key_height;
-        float blackKeyWidth;
-        float blackKeyHeight;
-        int ch_height;
-        int text_height;
-        int play_info_section_width;
-        String[] ch_types;
-        Canvas canvas;
-        BitmapDrawable bitmap_drawable;
-        Paint paint = new Paint();
-        bool needs_redraw;
+	class NmdspMainView : SurfaceView, ISurfaceHolderCallback
+	{
+		NmdspMainActivity activity;
+		Timer update_timer;
+		long time;
+		const int color_background = unchecked ((int) 0xFF000008);
+		const int color_white_key = unchecked ((int) 0xFFAaAaAa);
+		const int color_basic_stroke = unchecked ((int) 0xFF000000);
+		const int color_black_key = unchecked ((int) 0xFF000000);
+		const int color_black_key_edge = unchecked ((int) 0xFFFfFfFf);
+		const int color_keyon = unchecked ((int) 0xFFFfFf00);
+		const int color_aftertouch = unchecked ((int) 0xFFFf8000);
+		const int color_bend = unchecked ((int) 0xFF0080Ff);
+		const int color_hold = unchecked ((int) 0xFF0080C0);
+		const int color_bright = unchecked ((int) 0xFFFfFfE0);
+		const int color_usual = unchecked ((int) 0xFF3060C0);
+		const int color_dark = unchecked ((int) 0xFF1830C0);
+		const int color_hidden = unchecked ((int) 0xFF000030);
+		const int color_ch_base = unchecked ((int) color_bright);
+		const int color_ch_colored = unchecked ((int) color_usual);
+		const int color_ch_dark = unchecked ((int) color_dark);
+		const int color_ch_hidden = unchecked ((int) color_hidden);
+		const int color_ch_text_colored = unchecked ((int) color_ch_colored);
+		const int color_ch_text_base = unchecked ((int) color_ch_base);
+		const int color_ch_text_dark = unchecked ((int) color_ch_dark);
+		const int color_ch_text_hidden = unchecked ((int) color_ch_hidden);
+		int all_keys, key_lower_bound, key_higher_bound;
+		bool small_screen;
+		int channels;
+		int key_width;
+		int key_height;
+		float blackKeyWidth;
+		float blackKeyHeight;
+		int ch_height;
+		int text_height;
+		int play_info_section_width;
+		String[] ch_types;
+		Canvas canvas;
+		BitmapDrawable bitmap_drawable;
+		Paint paint = new Paint();
+		bool needs_redraw;
 
-        public NmdspMainView(Context context)
-            : base (context)
-        {
-            activity = (NmdspMainActivity) context;
-            key_lower_bound = 24;
-            key_higher_bound = 128;
-            all_keys = key_higher_bound - key_lower_bound;
-            channels = 16;
-            key_width = 7;
-            key_height = 16;
-            blackKeyWidth = (float)(key_width * 0.4 + 1);
-            blackKeyHeight = key_height / 2;
-            ch_height = 32;
-            text_height = 8;
-            play_info_section_width = 200;
-            ch_types = new String[] { "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI" };
+		public NmdspMainView(IntPtr handle)
+			: base (handle)
+		{
+		}
 
-            Holder.AddCallback(this);
-            Focusable = true;
-            RequestFocus();
-        }
+		public NmdspMainView(Context context)
+			: base (context)
+		{
+			activity = (NmdspMainActivity) context;
+			key_lower_bound = 24;
+			key_higher_bound = 128;
+			all_keys = key_higher_bound - key_lower_bound;
+			channels = 16;
+			key_width = 7;
+			key_height = 16;
+			blackKeyWidth = (float)(key_width * 0.4 + 1);
+			blackKeyHeight = key_height / 2;
+			ch_height = 32;
+			text_height = 8;
+			play_info_section_width = 200;
+			ch_types = new String[] { "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI", "MIDI" };
+
+			Holder.AddCallback(this);
+			Focusable = true;
+			RequestFocus();
+		}
 
 #if false
-        // JetPlayer.OnJetEventListener implementation
+		// JetPlayer.OnJetEventListener implementation
 
 		public void OnJetEvent(JetPlayer player, short segment, byte track, byte channel, byte controller, byte value)
 		{
@@ -97,7 +102,7 @@ namespace nmdsp
 		}
 
 		public void OnJetNumQueuedSegmentUpdate(JetPlayer player, int nbSegments)
-        {
+		{
 			// nothing to do
 		}
 
@@ -113,8 +118,8 @@ namespace nmdsp
 #endif
 
 		public override bool OnTouchEvent(MotionEvent e)
-        {
-            int x = (int) e.GetX();
+		{
+			int x = (int) e.GetX();
 			int y = (int) e.GetY();
 			switch (e.Action) {
 			case MotionEventActions.Down:
@@ -136,7 +141,7 @@ namespace nmdsp
 			return base.OnTouchEvent(e);
 		}
 
-        public void SurfaceChanged(ISurfaceHolder holder, int format, int width,
+		public void SurfaceChanged(ISurfaceHolder holder, int format, int width,
 				int height) {
 			// TODO Auto-generated method stub
 			
@@ -176,13 +181,13 @@ namespace nmdsp
 			c.DrawBitmap(bmp, new Matrix(), paint);
 			Holder.UnlockCanvasAndPost(c);
 
-            update_timer = new Timer () { Interval = 100 };
-            update_timer.Elapsed += delegate {
+			update_timer = new Timer () { Interval = 100 };
+			update_timer.Elapsed += delegate {
 				if (!needs_redraw)
 					return;
 				UpdateView();
 				};
-
+			update_timer.Start();
 		}
 		
 		void UpdateView()
@@ -378,23 +383,31 @@ namespace nmdsp
 		void SetupPlayerStatusPanel()
 		{
 			left_base= small_screen ? 280 : 400;
-			int size = 16;
+			int size = small_screen ? 24 : 32;
 			paint.TextSize = size;
 			play_button = GetRect (left_base + 50, 50 + 20, paint.MeasureText("Play"), size);
-			pause_button = GetRect (left_base + 100, 50 + 20, paint.MeasureText("Pause"), size);
-			stop_button = GetRect (left_base + 150, 50 + 20, paint.MeasureText("Stop"), size);
-			ff_button = GetRect (left_base + 50, 50 + 40, paint.MeasureText("FF"), size);
-			rew_button = GetRect (left_base + 100, 50 + 40, paint.MeasureText("Rew"), size);
-			load_button = GetRect (left_base + 150, 50 + 40, paint.MeasureText("Load"), size);
+			pause_button = GetRect (left_base + 50 + size * 3, 50 + 20, paint.MeasureText("Pause"), size);
+			stop_button = GetRect (left_base + 100 + size * 3, 50 + 20, paint.MeasureText("Stop"), size);
+			ff_button = GetRect (left_base + 50, 50 + 55, paint.MeasureText("FF"), size);
+			rew_button = GetRect (left_base + 50 + size * 3, 50 + 55, paint.MeasureText("Rew"), size);
+			load_button = GetRect (left_base + 100 + size * 3, 50 + 55, paint.MeasureText("Load"), size);
 
 			paint.Color = color_dark;
 			paint.SetStyle(Paint.Style.Fill);
+			var paint2 = new Paint(paint);
+			paint2.SetStyle(Paint.Style.Stroke);
 			canvas.DrawText("Play", play_button.Left, play_button.Bottom, paint);
+			canvas.DrawRect(play_button, paint2);
 			canvas.DrawText("Pause", pause_button.Left, pause_button.Bottom, paint);
+			canvas.DrawRect(pause_button, paint2);
 			canvas.DrawText("Stop", stop_button.Left, stop_button.Bottom, paint);
+			canvas.DrawRect(stop_button, paint2);
 			canvas.DrawText("FF", ff_button.Left, ff_button.Bottom, paint);
+			canvas.DrawRect(ff_button, paint2);
 			canvas.DrawText("Rew", rew_button.Left, rew_button.Bottom, paint);
+			canvas.DrawRect(rew_button, paint2);
 			canvas.DrawText("Load", load_button.Left, load_button.Bottom, paint);
+			canvas.DrawRect(load_button, paint2);
 		}
 
 		MediaPlayer media_player;
@@ -414,8 +427,9 @@ namespace nmdsp
 				this.needs_redraw = true;
 			}
 		}
-        internal void ProcessPlay()
+		internal void ProcessPlay()
 		{
+			DrawCommon("XXXXX");
 			if (smf_music == null)
 				return;
 			if (media_player == null) {
@@ -431,8 +445,8 @@ namespace nmdsp
 			}
 			if (midi_player == null) {
 				midi_player = new MidiPlayer (smf_music);
-                midi_player.Finished += delegate { StopViews(); };
-                midi_player.MessageReceived += HandleSmfMessage;
+				midi_player.Finished += delegate { StopViews(); };
+				midi_player.MessageReceived += HandleSmfMessage;
 			}
 			// This state check is not necessary for MidiPlayer, 
 			// but for JetPlayer (which does not expose state). 
@@ -452,7 +466,7 @@ namespace nmdsp
 				media_player.Pause();
 			DrawCommon ("PAUSE");
 		}
-        internal void ProcessStop()
+		internal void ProcessStop()
 		{
 			if (midi_player == null)
 				return;
@@ -464,16 +478,16 @@ namespace nmdsp
 			}
 			DrawCommon ("STOP");
 		}
-        internal void ProcessFastForward()
+		internal void ProcessFastForward()
 		{
 			DrawCommon ("not supported yet");
 		}
-        internal void ProcessRewind()
+		internal void ProcessRewind()
 		{
 			DrawCommon ("not supported yet");
 		}
 
-        internal void ProcessLoad()
+		internal void ProcessLoad()
 		{
 			Intent intent = new Intent("org.openintents.action.PICK_FILE");
 			activity.StartActivityForResult(intent, 1);
@@ -494,14 +508,14 @@ namespace nmdsp
 					DrawCommon ("Loading " + midifile.Name);
 					UpdateView();
 					jetfile = midifile;
-                    using (var fs = File.OpenRead(midifile.FullName))
-                    {
-                        SmfReader r = new SmfReader(fs);
-                        r.Parse();
-                        smf_music = r.Music;
-                        smf_music = SmfTrackMerger.Merge(smf_music);
-                        DrawCommon("Loaded");
-                    }
+					using (var fs = File.OpenRead(midifile.FullName))
+					{
+						SmfReader r = new SmfReader(fs);
+						r.Parse();
+						smf_music = r.Music;
+						smf_music = SmfTrackMerger.Merge(smf_music);
+						DrawCommon("Loaded");
+					}
 				} catch (SmfParserException ex) {
 					DrawCommon ("Parse error " + ex);
 				} catch (IOException ex) {
@@ -543,7 +557,7 @@ namespace nmdsp
 			needs_redraw = true;
 		}
 
-        void HandleSmfMessage(SmfMessage m)
+		void HandleSmfMessage(SmfMessage m)
 		{
 			switch (m.MessageType) {
 			case SmfMessage.NoteOn:
@@ -617,47 +631,47 @@ namespace nmdsp
 				*/
 			}
 		}
-    }
+	}
 
-    [Activity(MainLauncher = true)]
-    public class NmdspMainActivity : Activity
-    {
-        NmdspMainView view;
+	[Activity(MainLauncher = true)]
+	public class NmdspMainActivity : Activity
+	{
+		NmdspMainView view;
 
-        public NmdspMainActivity ()
-        {
-        }
+		public NmdspMainActivity ()
+		{
+		}
 
-        protected override void OnCreate(Bundle bundle)
-        {
-            base.OnCreate(bundle);
-            view = new NmdspMainView(this);
-            SetContentView(view);
-        }
+		protected override void OnCreate(Bundle bundle)
+		{
+			base.OnCreate(bundle);
+			view = new NmdspMainView(this);
+			SetContentView(view);
+		}
 
-        protected override void OnPause()
-        {
-            base.OnPause();
-            view.ProcessPause();
-        }
+		protected override void OnPause()
+		{
+			base.OnPause();
+			view.ProcessPause();
+		}
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (resultCode == Result.Ok && data != null)
-            {
-                String filename = data.DataString;
-                if (filename == null)
-                    return;
-                if (filename.StartsWith("file://"))
-                    filename = filename.Substring(7); // remove URI prefix
+		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult(requestCode, resultCode, data);
+			if (resultCode == Result.Ok && data != null)
+			{
+				String filename = data.DataString;
+				if (filename == null)
+					return;
+				if (filename.StartsWith("file://"))
+					filename = filename.Substring(7); // remove URI prefix
 
-                this.view.LoadFileAsync(new FileInfo(filename));
-            }
-        }
-    }
+				this.view.LoadFileAsync(new FileInfo(filename));
+			}
+		}
+	}
 
-    class ParameterVisualizerPanel : BitmapDrawable
+	class ParameterVisualizerPanel : BitmapDrawable
 	{
 		public ParameterVisualizerPanel ()
 		{
